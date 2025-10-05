@@ -1,0 +1,49 @@
+worker1-1  | 2025-10-05 22:52:31,436 [INFO]: ==================
+worker1-1  | 2025-10-05 22:52:31,437 [INFO]: DistributedCommunicator with rank 0
+worker2-1  | 2025-10-05 22:52:31,436 [INFO]: ==================
+worker1-1  | 2025-10-05 22:52:31,437 [INFO]: ==================
+worker2-1  | 2025-10-05 22:52:31,436 [INFO]: DistributedCommunicator with rank 1
+worker2-1  | 2025-10-05 22:52:31,436 [INFO]: ==================
+worker1-1  | 2025-10-05 22:52:31,537 [INFO]: Added key: store_based_barrier_key:1 to store for rank: 0
+worker2-1  | 2025-10-05 22:52:31,543 [INFO]: Added key: store_based_barrier_key:1 to store for rank: 1
+worker1-1  | 2025-10-05 22:52:31,566 [INFO]: Added key: store_based_barrier_key:2 to store for rank: 0
+worker2-1  | 2025-10-05 22:52:31,577 [INFO]: Added key: store_based_barrier_key:2 to store for rank: 1
+worker2-1  | 2025-10-05 22:52:31,577 [INFO]: Added key: store_based_barrier_key:3 to store for rank: 1
+worker1-1  | 2025-10-05 22:52:31,600 [INFO]: Added key: store_based_barrier_key:3 to store for rank: 0
+worker1-1  | 2025-10-05 22:52:31,624 [INFO]: Added key: store_based_barrier_key:4 to store for rank: 0
+worker2-1  | 2025-10-05 22:52:31,626 [INFO]: Added key: store_based_barrier_key:4 to store for rank: 1
+worker2-1  | 2025-10-05 22:52:31,626 [INFO]: World size = 2
+worker1-1  | 2025-10-05 22:52:31,634 [INFO]: World size = 2
+worker1-1  | 2025-10-05 22:52:31,663 [INFO]: TTPClient 0 initialized
+worker2-1  | 2025-10-05 22:52:31,663 [INFO]: TTPClient 1 initialized
+worker2-1  | 2025-10-05 22:52:32,058 [INFO]: [Epoch 01] loss=0.235197
+worker1-1  | 2025-10-05 22:52:32,058 [INFO]: [Epoch 01] loss=0.235197
+worker2-1  | 2025-10-05 22:52:32,806 [INFO]: [Epoch 05] loss=0.071038
+worker1-1  | 2025-10-05 22:52:32,806 [INFO]: [Epoch 05] loss=0.071038
+worker2-1  | 2025-10-05 22:52:33,887 [INFO]: [Epoch 10] loss=0.060431
+worker1-1  | 2025-10-05 22:52:33,886 [INFO]: [Epoch 10] loss=0.060431
+worker2-1  | 2025-10-05 22:52:34,682 [INFO]: [Epoch 15] loss=0.059910
+worker1-1  | 2025-10-05 22:52:34,682 [INFO]: [Epoch 15] loss=0.059910
+worker2-1  | 2025-10-05 22:52:35,385 [INFO]: [Epoch 20] loss=0.059917
+worker1-1  | 2025-10-05 22:52:35,385 [INFO]: [Epoch 20] loss=0.059917
+worker2-1  | 2025-10-05 22:52:36,120 [INFO]: [Epoch 25] loss=0.059919
+worker1-1  | 2025-10-05 22:52:36,120 [INFO]: [Epoch 25] loss=0.059919
+worker2-1  | 2025-10-05 22:52:36,882 [INFO]: [Epoch 30] loss=0.059926
+worker2-1  | 2025-10-05 22:52:36,882 [INFO]: Model train elapsed time: 5.0218 seconds
+worker1-1  | 2025-10-05 22:52:36,882 [INFO]: [Epoch 30] loss=0.059926
+worker1-1  | 2025-10-05 22:52:36,882 [INFO]: Model train elapsed time: 5.0217 seconds
+worker1-1  | 2025-10-05 22:52:36,882 [INFO]: ====Communication Stats====
+worker1-1  | 2025-10-05 22:52:36,882 [INFO]: Rounds: 4410
+worker1-1  | 2025-10-05 22:52:36,882 [INFO]: Bytes: 256629360.0
+worker1-1  | 2025-10-05 22:52:36,882 [INFO]: Communication time: 3.049584745967877
+worker2-1  | 2025-10-05 22:52:36,923 [INFO]: Test MSE: 0.0645904541015625
+worker1-1  | 2025-10-05 22:52:36,923 [INFO]: Test MSE: 0.0645904541015625
+worker1-1  | 2025-10-05 22:52:36,925 [INFO]: Learned weights share: tensor([-3695597402457415980, -9165975634151848854,  9017695127916018433,
+worker2-1  | 2025-10-05 22:52:36,925 [INFO]: Learned weights share: tensor([ 3695597402457418279,  9165975634151850824, -9017695127916014311,
+worker1-1  |          6163734148539244770,  6449551503349617959,  4607193693917802625,
+worker2-1  | 2025-10-05 22:52:36,926 [INFO]: Learned bias share: 746883132586876592
+worker1-1  | 2025-10-05 22:52:36,926 [INFO]: End worker with rank: 0
+worker2-1  | 2025-10-05 22:52:36,926 [INFO]: End worker with rank: 1
+worker1-1 exited with code 0
+ttp-1 exited with code 0
+worker2-1 exited with code 0

@@ -1,6 +1,6 @@
 services:
   worker1:
-    build: crypten-linreg
+    build: .
     command: python -m worker call tasks.mpc:linreg
     environment:
       # communicator
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./data/worker1:/data/linreg
   worker2:
-    build: crypten-linreg
+    build: .
     command: python -m worker call tasks.mpc:linreg
     environment:
       # communicator
@@ -40,7 +40,7 @@ services:
     volumes:
       - ./data/worker2:/data/linreg
   ttp:
-    build: crypten-linreg
+    build: .
     command: python -m worker call tasks.mpc:ttp
     environment:
       # communicator

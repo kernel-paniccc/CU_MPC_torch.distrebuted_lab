@@ -6,9 +6,9 @@ import crypten.communicator as comm
 import crypten.nn as nn
 from crypten.nn.loss import MSELoss
 from crypten.optim import SGD
-from crypten.mpc.primitives import ArithmeticSharedTensor, BinarySharedTensor
 
 from config import config
+
 from . import task
 
 def init():
@@ -20,55 +20,23 @@ def init():
 def ttp():
     crypten.mpc.provider.TTPServer()
 
-@task("mul")
-def mul():
-    init()
-    rank = comm.get().get_rank()
-
-    tensor_size = 4
-    if rank == 0:
-        x = torch.arange(tensor_size) * 1_000_000
-        y = torch.zeros(0)
-    elif rank == 1:
-        x = torch.zeros(0)
-        y = torch.arange(tensor_size) + 1
-
-    x_enc = ArithmeticSharedTensor(x, src=0, broadcast_size=True)
-    y_enc = ArithmeticSharedTensor(y, src=1, broadcast_size=True)
-
-    a_enc = BinarySharedTensor(x, src=0, broadcast_size=True)
-    b_enc = BinarySharedTensor(y, src=1, broadcast_size=True)
-
-    logging.info(f"Rank {rank}: x share = {x_enc.share}")
-    logging.info(f"Rank {rank}: y share = {y_enc.share}")
-
-    comm.get().reset_communication_stats()
-    z_enc = x_enc * y_enc
-    comm.get().print_communication_stats()
-
-    comm.get().reset_communication_stats()
-    c_enc = a_enc > b_enc
-    comm.get().print_communication_stats()
-
-    logging.info(f"Rank {rank}: z share = {z_enc.share}")
-    logging.info(f"Rank {rank}: c share = {c_enc.share}")
-
-    z = z_enc.get_plain_text()
-    c = c_enc.get_plain_text()
-    logging.info(f"Rank {rank}: z plaintext = {z}")
-    logging.info(f"Rank {rank}: c plaintext = {c}")
-
-    crypten.uninit()
 
 @task("linreg")
 def linreg():
     init()
 
-    # Создаём mpc-тензоры
-    X_train_enc = crypten.load_from_party(config.X_TRAIN_PATH, src=0)
-    X_test_enc  = crypten.load_from_party(config.X_TEST_PATH, src=0)
-    y_train_enc = crypten.load_from_party(config.Y_TRAIN_PATH, src=1)
-    y_test_enc  = crypten.load_from_party(config.Y_TEST_PATH, src=1)
+    rank = comm.get().get_rank()
+
+    x_train_enc1 = crypten.load_from_party(config.X_TRAIN_PATH_WORK1, src=0)
+    y_train_enc1 = crypten.load_from_party(config.Y_TRAIN_PATH_WORK1, src=0)
+    x_train_enc2 = crypten.load_from_party(config.X_TRAIN_PATH_WORK2, src=1)
+    y_train_enc2 = crypten.load_from_party(config.Y_TRAIN_PATH_WORK2, src=1)
+    x_test_enc = crypten.load_from_party(config.X_TEST_PATH, src=0)
+    y_test_enc = crypten.load_from_party(config.Y_TEST_PATH, src=0)
+
+
+    X_train_enc = crypten.cat([x_train_enc1, x_train_enc2], dim=0)
+    y_train_enc = crypten.cat([y_train_enc1, y_train_enc2], dim=0)
 
     # Модель
     class LinearModel(nn.Module):
@@ -106,7 +74,7 @@ def linreg():
     for epoch in range(n_epochs):
         epoch_loss = 0.0
         for i in range(n_batches):
-            start, end = i * batch_size, min((i+1) * batch_size, n_samples)
+            start, end = i * batch_size, min((i + 1) * batch_size, n_samples)
 
             X_batch = X_train_enc[start:end]
             y_batch = y_train_enc[start:end]
@@ -120,14 +88,14 @@ def linreg():
 
             epoch_loss += loss.get_plain_text().item()
 
-        if (epoch+1) % 5 == 0 or epoch == 0:
-            logging.info(f"[Epoch {epoch+1:02d}] loss={epoch_loss/n_batches:.6f}")
+        if (epoch + 1) % 5 == 0 or epoch == 0:
+            logging.info(f"[Epoch {epoch + 1:02d}] loss={epoch_loss / n_batches:.6f}")
 
     logging.info(f"Model train elapsed time: {time.time() - t0:.4f} seconds")
     comm.get().print_communication_stats()
     # Валидация на X_test
     with torch.no_grad():
-        y_pred_enc = model(X_test_enc)
+        y_pred_enc = model(x_test_enc)
         test_loss = criterion(y_pred_enc, y_test_enc)
         logging.info(f"Test MSE: {test_loss.get_plain_text().item()}")
 
@@ -137,5 +105,6 @@ def linreg():
 
     logging.info(f"Learned weights share: {w_learned_enc.share.view(-1)}")
     logging.info(f"Learned bias share: {b_learned_enc.share.item()}")
-    
+    logging.info(f"End worker with rank: {rank}")
+
     crypten.uninit()
