@@ -1,11 +1,21 @@
+import logging
+import sys
 import argparse
 from importlib import import_module
+
+from config import config
 from tasks import REGISTRY
+
+
+logging.basicConfig(
+    level=config.LOGLEVEL,
+    stream=sys.stdout,
+    format="%(asctime)s [%(levelname)s]: %(message)s",
+)
+
 
 def main():
     parser = argparse.ArgumentParser(prog="worker")
-    parser.add_argument("--rank", type=int, default=0)
-    parser.add_argument("--world_size", type=int, default=1)
 
     subparsers = parser.add_subparsers(dest="task", required=True)
 
@@ -23,7 +33,7 @@ def main():
     else:
         fn = REGISTRY[args.task]
 
-    fn(rank=args.rank, world_size=args.world_size)
+    fn()
 
 if __name__ == "__main__":
     main()

@@ -1,20 +1,57 @@
 services:
   worker1:
-    build: .
-    command: python -m worker --rank 0 --world_size 3 call tasks.collective:all_gather
+    build: crypten-linreg
+    command: python -m worker call tasks.mpc:linreg
     environment:
+      # communicator
+      - RENDEZVOUS=env://
       - MASTER_ADDR=worker1
       - MASTER_PORT=29500
+      - WORLD_SIZE=2
+      - RANK=0
+      # crypten
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      # ml
+      - EPOCHS=30
+      # logging
+      - LOGLEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/worker1:/data/linreg
   worker2:
-    build: .
-    command: python -m worker --rank 1 --world_size 3 call tasks.collective:all_gather
+    build: crypten-linreg
+    command: python -m worker call tasks.mpc:linreg
     environment:
+      # communicator
+      - RENDEZVOUS=env://
       - MASTER_ADDR=worker1
       - MASTER_PORT=29500
-
-  worker3:
-    build: .
-    command: python -m worker --rank 2 --world_size 3 call tasks.collective:all_gather
+      - WORLD_SIZE=2
+      - RANK=1
+      # crypten
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      # ml
+      - EPOCHS=30
+      # logging
+      - LOGLEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/worker2:/data/linreg
+  ttp:
+    build: crypten-linreg
+    command: python -m worker call tasks.mpc:ttp
     environment:
+      # communicator
+      - RENDEZVOUS=env://
       - MASTER_ADDR=worker1
       - MASTER_PORT=29500
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - WORLD_SIZE=2
+      - RANK=2
+      # crypten
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      # logging
+      - LOGLEVEL=ERROR
